@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <!--js functions-->
+        <script type="text/javascript" src="../static/js/commStructure.js?ver=1"></script>
+        <script type="text/javascript" src="../static/js/commFunc.js?ver=1"></script>
+        <script language="JavaScript" >loadCommHead() </script>
+        <script>enableGoogleAnalysis()</script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link href="../static/css/navBar.css" rel="stylesheet" type="text/css">
+        <style>
+            .navbar-nav>li>a {
+            width: 500px;
+            }
+        </style>
+
+
+        <title>MDS2</title>
+    </head>
+
+    <body style="background-color:white;">
+        <div class="container"><script language="JavaScript" >header() </script></div>
+        <div class="container">
+        <div class="well">
+            <div class="alert alert-danger">
+                <h2>Invalid input sequences!</h2>
+            </div>
+        <h4>Please note that the input sequences must follow these rules:</h4>
+        <p>
+            1. The sequences is in fasta form.</br>
+            2. The sequences is DNA or RNA.</br>
+            3. The count of sequences is less than 300.</br>
+            4. The length of each sequence is less than 40 and more than 8.</br>
+            <a href="http://cse-jcui-09.unl.edu:8000/input">Back to input</a>
+        </p>
+        </div>
+        </div>
+
+
+    </body>
+
+</html>

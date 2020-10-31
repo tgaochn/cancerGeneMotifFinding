@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script type="text/javascript" src="../static/js/commStructure.js"></script>
+        <script language="JavaScript" >loadCommHead() </script>
+        <script>enableGoogleAnalysis()</script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js?ver=1"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js?ver=1"></script>
+        <link href="../static/css/navBar.css" rel="stylesheet" type="text/css">
+        <title>all cell line</title>
+    </head>
+
+    <body style="background-color:white;">
+        <!--load common header-->
+        <div class="container"><script language="JavaScript" >header() </script></div>
+
+        <!--navigation bar-->
+        <div class="container">
+              <div role="navigation" class="navbar-default navbar-inverse">
+                <div class="container">
+                  <div class="navbar-header">
+                    <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                  </div>
+                  <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                      <li style="width: 500px">
+                        <a href="/input">Perform motif identification on given DNA or RNA sequences</a></li>
+                      <li style="width: 500px" class="active">
+                        <a href="/allCellLine">See predicted motifs on exosomal microRNAs</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+<div>
+    <br>
+</div>
+
+{#        table and description for existing results#}
+        <div class="container">
+            <legend>Description</legend>
+            This database archives the MDS<sup>2</sup>-predicted sequence motifs on exosomal microRNAs collected from three major public databases. </br>
+            The microRNA sequences were organized by the cellular sources where they originate from (see Table below).</br></br>
+
+            <div class="table-responsive">
+            <!--<table class="table table-bordered table-hover table-striped text-center">-->
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="text-center">
+                    <tr>
+                        <th>Data source</th>
+                        <th>Number of cellular sources</th>
+                        <th>Number of unique microRNA sequence</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ExoCarta</td>
+                        <td>22</td>
+                        <td>1392</td>
+                        <td>Keerthikumar <i>et al.</i>, Journal of Molecular Biology, 2015</td>
+                    </tr>
+                    <tr>
+                        <td>EVpedia</td>
+                        <td>21</td>
+                        <td>663</td>
+                        <td>Kim <i>et al.</i>, Bioinformatics, 2015</td>
+                    </tr>
+                    <tr>
+                        <td>Vesiclepedia</td>
+                        <td>19</td>
+                        <td>833</td>
+                        <td>Kalra <i>et al.</i>, PLoS Biology, 2012</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+
+        <!--cell line table-->
+        </br>
+        <div class="container">
+            <legend>Results of all cell lines</legend>
+
+            {% for category, cellNmLis in handler.existingRlt.iteritems() %}
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center">
+{#                            use text because of copyright#}
+                            <a href={{ handler.website[category] }}> <font size="6" color="black">{{ category.capitalize() }}</font> </a>
+{#                            <a href={{ handler.website[category] }}> <img style="height: 80px;width: 300px" src={{ '%s%s%s' % ('../static/img/', category, 'Logo.png') }}> </a>#}
+
+                        </div>
+                        <div class="panel-body text-center">
+                            <ul class="list-group">
+                                {% for (cellNm, cellTitile) in cellNmLis %}
+                                    <a href={{'/existingRlt/%s_%s' % (category, cellNm)}}><li class="list-group-item">{{cellTitile}}</li></a>
+                                {% end %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% end %}
+        </div>
+
+        <!--load common footer-->
+        <div class="container"><script language="JavaScript" >footer();</script></div>
+
+    </body>
+</html>

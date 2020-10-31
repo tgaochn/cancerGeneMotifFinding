@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <script type="text/javascript" src="../static/js/commStructure.js?ver=1"></script>
+        <script language="JavaScript" >loadCommHead() </script>
+        <script>enableGoogleAnalysis()</script>
+        <meta http-equiv="refresh" content={{handler.refreshInterval}}>
+
+        <title>Motif Identification processing</title>
+    </head>
+
+    <body style="background-color:white;">
+        <div id="page-wrapper">
+            <div class="container">
+
+            <!--load common header-->
+            <div class="container"><script language="JavaScript" >header() </script></div>
+
+                <p>Your job has been successfully submitted. You may bookmark this page to access your results.</p>
+
+                <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Job ID</th>
+                                        <th>{{handler.jobNm}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Submission Time </td>
+                                        <td>{{handler.submitTime}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Expiration Time</td>
+                                        <td>{{handler.expireTime}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Job Details</td>
+                                        <td>{{handler.inputFnInfoStr}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+            </div>
+        </div>
+
+        <!--load common footer-->
+        <div class="container"><script language="JavaScript" >footer();</script></div>
+
+    </body>
+
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    <meta charset="UTF-8" />
+    <title>Motif Identification result</title>
+    <style>
+        .popupTd {
+          height:25px;
+        }
+
+        .miniLocationContainer {
+          position:relative;
+          box-sizing: border-box;
+          height: 3px;
+          padding: 2px;
+          margin: 0 0 0 1em;
+        }
+
+        .miniMotifLocBar {
+          position: absolute;
+          z-index: 3;
+          top: 0;
+          box-sizing: border-box;
+          border: 1px solid black;
+          height: 1px;
+          background-color: red;
+          border-bottom-width: 0;
+          padding: 1px
+        }
+
+        .miniSeqLine {
+          position:absolute;
+          z-index:2;
+          width:100%;
+          height:1px;
+          top:1px;
+          left:0;
+          background-color:gray;
+        }
+
+        .locationContainer {
+          position:relative;
+          box-sizing: border-box;
+          height: 25px;
+          padding: 0;
+          margin: 0 0 0 1em;
+        }
+
+        .motifLocBar {
+          position: absolute;
+          z-index: 3;
+          top: 0;
+          box-sizing: border-box;
+          border: 1px solid black;
+          height: 12px;
+          background-color: red;
+          border-bottom-width: 0;
+        }
+
+        .seqLine {
+          position:absolute;
+          z-index:2;
+          width:100%;
+          height:2px;
+          top:12px;
+          left:0;
+          background-color:gray;
+        }
+
+        .vertCenterBox{
+            position:relative;
+            height:100px;
+        }
+
+        .vertCenterBox .vertCenterContent{
+            display:inline-block;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .logoImg{
+            height: 100px;
+            width: 150px;
+        }
+
+        .miniLoc{
+            width: 300px
+        }
+
+    </style>
+
+        <script type="text/javascript" src="../static/js/commStructure.js?ver=1"></script>
+        <script type="text/javascript" src="../static/js/commFunc.js?ver=1"></script>
+        <script>loadCommHead() </script>
+        <script>enableGoogleAnalysis()</script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    </head>
+
+    <body style="background-color:white;">
+            <!--common header for all pages-->
+            <div class="container"><script>header() </script></div>
+
+            <!--test area-->
+            <div class="container">
+                <!-- 1111 -->
+                <!-- <p><a href="http://cse-jcui-08.unl.edu:7001/existingRlt/exocarta_hsa_Endothelial_cells">refresh</a></p> -->
+                <!-- <p><a href="http://cse-jcui-08.unl.edu:7001/result/d6c4d5fc-7529-4ef4-9b26-6f5d4ac0ffaf">refresh</a></p> -->
+            </div>
+            <!--test area-->
+
+            <!--motif information block-->
+            <div class="container">
+                <legend>Motif information</legend>
+
+                <!--length buttom-->
+                <div class="container">
+                {% for motifLength in handler.motifAllLenLis %}
+                    <button id="{{'b_%s' % (motifLength)}}" type="button" class="btn btn-lg btn-default" onclick=clickBtn("{{motifLength}}","{{handler.motifAllLenStr}}")>motif length={{motifLength}}</button>
+                {% end %}
+                <br/>
+                <br/>
+                </div>
+
+                <!--motif table-->
+                <div class="container">
+                {% for motifLength, patternInfoLis in handler.patternInfoLis %}
+                <div class="table-responsive">
+                <table id="{{'t_%s' % (motifLength)}}" style="display: none" border="1" class="table table-bordered table-hover">
+                    <!--title row-->
+                    <tr>
+                        <td align="center">Pattern</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#pattern"></i></td>
+                        <td align="center">Logo</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#logo"></i></td>
+                        <!--<td align="center">Location</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#locInfo"></i></td>-->
+                        <td align="center" colspan="2">Coverage (in {{handler.inputFnInfo[1][0]}})</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#cov"></i></td>
+                        <td align="center">Information content</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#ic"></i></td>
+                        <td align="center">Adj. <i>p</i>-value</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#pvalue"></i></td>
+                        <td align="center">Constitutive sequences</br><i class="fa fa-question-circle fa-lg" data-toggle="modal" data-target="#segmentInfo"></i></td>
+                    </tr>
+
+                    <!--table content-->
+                    {% for pattern, logoFn, coverage, IC, pvalueRNA, pvalueMiR in patternInfoLis %}
+                        <tr>
+                            <td> <script>tableAlignCenter("{{ pattern }}")</script> </td>
+                            <td > <img class="logoImg" src={{ logoFn }} />  </td>
+                            <td>
+                                <!--mini location -->
+                                <div class="miniLoc" data-toggle="modal" data-target="{{'#' + handler.pattern2Idx[pattern]}}" style="height:150px;overflow:auto;">
+                                {% for seqID, seqNm, seqLen, posLis in handler.locDict[(motifLength, pattern)] %}
+                                    <div class="miniLocationContainer" data-max="25" data-off="0">
+                                        <!--mini sequence length-->
+                                        <div class="miniSeqLine" style="{{'width: ' + str(seqLen * 100.0 / handler.maxSeqLen) + '%'}}"></div>
+                                        <!--mini bar start position and length-->
+                                        {% for pos in posLis %}
+                                            <div class="miniMotifLocBar" data-colour-index="0" style="{{'left:%s%%;width:%s%%;' % (pos * 100.0 / handler.maxSeqLen, motifLength * 100.0 / handler.maxSeqLen)}}"></div>
+                                        {% end %}
+                                    </div>
+                                {% end %}
+                                </div>
+                            </td>
+                            <td> <script>tableAlignCenter("{{ '%s (%.2f%%)' %(coverage, float(coverage) * 100 / float(handler.inputFnInfo[1][0]))}}")</script> </td>
+
+                            <td> <script>tableAlignCenter("{{ '%.2f' % float(IC) }}")</script> </td>
+                            {% if float(pvalueRNA) != 0 %}
+                                <td> <script>tableAlignCenter("{{ '%.2E' % float(pvalueRNA) }}")</script> </td>
+                            {% else %}
+                                <td> <script>tableAlignCenter('<img src="../static/img/significant.png" title="<10^{-6}" style="height:20px;width:60px;"/>')</script> </td>
+                            {% end %}
+                            <td>
+                                <div class="vertCenterBox" align="center" style="height:150px;overflow:auto;"><div class="vertCenterContent" align="center">
+                                    <container>
+                                        <table border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;border-width:0px; border-style:hidden;">
+                                {% for kmer in handler.pattern2kmerSet.get(pattern, []) %}
+{#                                        <script>tableAlignCenter('<li class="list-group-item" style="padding: 3px 1px">{{kmer}}</li>')</script>#}
+{#                                    <li class="list-group-item" style="padding: 3px 1px">{{kmer}}</li>#}
+{#                                    <li class="list-group-item" style="padding: 3px 1px"><div>{{kmer}}</div></li>#}
+                                            <tr>{{kmer}}<br></tr>
+{#                                    <div><li style="padding: 3px 1px">{{kmer}}</li></div>#}
+                                {% end %}
+                                            </table>
+                                </container>
+                                </div></div>
+                            </td>
+                        </tr>
+                    {% end %}
+                </table>
+                </div>
+                {% end %}
+                </div>
+
+                <!--select and vis buttons-->
+                <div align="center">
+                    <button class="btn btn-success" data-toggle="modal" data-target="#selectMotif">selectAndVis</button>
+                </div>
+
+                {% if not handler.patternInfoLis %}
+                    <div class="container">
+                        No significant motif found.
+                    </div>
+                {% end %}
+
+                <!--default active button-->
+                <script language="javascript">clickBtn("{{handler.motifDefaultLen}}","{{handler.motifAllLenStr}}");</script>
+            </div>
+
+            <!--input sequence information block-->
+            <div class="container">
+                <legend>Input information</legend>
+                <table class="table table-hover">
+                    <tr>
+                        <td>Source</td>
+                        <td>Sequence count</td>
+                        <td>Minimum length of sequence</td>
+                        <td>Maximum length of sequence</td>
+                    </tr>
+                    <tr>
+                        <td>{{handler.inputFnInfo[0]}}</td>
+                        <td>{{handler.inputFnInfo[1][0]}}</td>
+                        <td>{{handler.inputFnInfo[1][1]}}</td>
+                        <td>{{handler.inputFnInfo[1][2]}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="container">
+                <form id="inputForm" action="{{'/vis/' + handler.jobNm}}" method="post" enctype="multipart/form-data">
+                    <div class="modal fade" id="selectMotif" role="dialog">
+                        <div class="modal-dialog" style="width:1000px">
+                            <div class="modal-content">
+                                <!-- header -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">select all motif candidate and visualize them</h4>
+                                </div>
+
+                                <!-- body -->
+                                <div class="modal-body">
+                                    <table id="motifSelectorTbl" border="1" class="table table-bordered table-hover">
+                                        <!--table title row-->
+                                        <tr>
+                                            <td align="center">Pattern</br></td>
+                                            <td align="center">Logo</br></td>
+                                            <td align="center">Length</br></td>
+                                            <td align="center">Coverage (in {{handler.inputFnInfo[1][0]}})</br></td>
+                                            <td align="center">Information content</br></td>
+                                            <td align="center">Adj. <i>p</i>-value</br></td>
+                                        </tr>
+
+                                        <!-- table value -->
+                                        <div class="btn-group mr-4" data-toggle="buttons">
+                                            {% for motifLength, patternInfoLis in handler.patternInfoLis %}
+                                                {% for pattern, logoFn, coverage, IC, pvalueRNA, pvalueMiR in patternInfoLis %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="vertCenterBox"  align="center"><div class="vertCenterContent" align="center">
+                                                        <label class="btn btn-success form-check-label waves-effect waves-light active">
+                                                            <input type="checkbox" class="form-check-input" autocomplete="off"> {{ pattern }}
+                                                        </label>
+                                                        </div></div>
+                                                    </td>
+                                                    <td > <img class="logoImg" src={{ logoFn }} />  </td>
+                                                    <td> <script>tableAlignCenter("{{ motifLength }}")</script> </td>
+                                                    <td> <script>tableAlignCenter("{{ '%s (%.2f%%)' %(coverage, float(coverage) * 100 / float(handler.inputFnInfo[1][0]))}}")</script> </td>
+                                                    <td> <script>tableAlignCenter("{{ '%.2f' % float(IC) }}")</script> </td>
+                                                    <td> <script>tableAlignCenter("{{ '%.2E' % float(pvalueRNA) }}")</script> </td>
+                                                </tr>
+                                                {% end %}
+                                            {% end %}
+                                        </div>
+                                    </table>
+                                </div>
+
+                                <!-- footer -->
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Submit</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!--popup subpage to show location-->
+            {% for (length, pattern), locInfo in handler.locDict.iteritems() %}
+                <div class="modal fade" id="{{handler.pattern2Idx[pattern]}}" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!--subpage header-->
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">{{pattern}}</h4>
+                            </div>
+
+                            <!--subpage body-->
+                            <div class="modal-body">
+                                {% for seqID, seqNm, seqLen, posLis in locInfo %}
+                                    <tr class="">
+                                        <td>{{seqID}}. </td>
+                                        <td>{{seqNm}}</td>
+                                        <td class="popupTd">
+                                            <div class="locationContainer" data-max="25" data-off="0">
+                                                <!--sequence line-->
+                                                <div class="seqLine" style="{{'width: ' + str(seqLen * 100.0 / handler.maxSeqLen) + '%'}}"></div>
+                                                <!--bar start position and length-->
+                                                {% for pos in posLis %}
+                                                    <!--<div class="motifLocBar" data-colour-index="0" style="{{'left:%s%%;width:%s%%;' % (pos * 100.0 / seqLen, length)}} "></div>-->
+                                                    <div class="motifLocBar" data-colour-index="0" style="{{'left:%s%%;width:%s%%;' % (pos * 100.0 / handler.maxSeqLen, length * 100.0 / handler.maxSeqLen)}} "></div>
+                                                {% end %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% end %}
+                            </div>
+
+                            <!--subploadCommFooteroter-->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% end %}
+
+
+
+            <script>easyPopupMsg("pattern", 'What does \'Pattern\' mean?', 'It shows the predicted motif strings.')</script>
+            <script>easyPopupMsg("logo", 'What does \'Logo\' mean?', 'It shows the logo figure of each predicted motif. </br>These logo figures are generated by Weblogo 3.5.')</script>
+            <script>easyPopupMsg("cov", 'What does \'Coverage \' mean?', 'The first column shows the location of the identified pattern in input sequences. </br>Click to see sequence details.</br></br>The second column shows the count ( and percentage) of input sequences that include the corresponding motif.')</script>
+            <script>easyPopupMsg("ic", 'What does \'Information content\' mean?', 'A higher information content implies better explicitness.')</script>
+            <script>easyPopupMsg("pvalue", 'What does \'Adj. p-value\' mean?', 'A lower adjusted <i>p</i>-value implies better significance.')</script>
+            <script>easyPopupMsg("segmentInfo", 'What does \'Constitutive sequences\' mean?', 'It shows all the significant k-mers that form the corresponding pattern.')</script>
+
+
+        <!--load common footer-->
+        <div class="container"><script>footer();</script></div>
+
+    </body>
+
+</html>

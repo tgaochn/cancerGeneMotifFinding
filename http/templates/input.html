@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--js functions-->
+    <script type="text/javascript" src="../static/js/commStructure.js?ver=1"></script>
+    <script type="text/javascript" src="../static/js/commFunc.js?ver=1"></script>
+    <script language="JavaScript" >loadCommHead() </script>
+    <script>enableGoogleAnalysis()</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="../static/css/navBar.css" rel="stylesheet" type="text/css">
+    <style>
+        .navbar-nav>li>a {
+            width: 500px;
+        }
+    </style>
+
+
+    <title>MDS2</title>
+</head>
+
+<body style="background-color:white;">
+<!--load common header-->
+<div class="container"><script language="JavaScript" >header() </script></div>
+
+<!--test-->
+<!-- <p><a href="http://cse-jcui-08.unl.edu:7001">input</a></p> -->
+
+<!--test-->
+
+<!--navigation bar-->
+<div class="container">
+    <div role="navigation" class="navbar-default navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="/input">Perform motif identification on given DNA or RNA sequences</a></li>
+                    <li>
+                        <a href="/allCellLine">See predicted motifs on exosomal microRNAs</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <br>
+</div>
+
+<!--submission form-->
+<div class="container">
+    <form id="inputForm" action="{{'/preprocess/' + handler.jobNm}}" method="post" enctype="multipart/form-data">
+        <!--user input and negative samples-->
+        <legend>Input sequences</legend>
+        <div class="container">
+
+            <!--left part: user input-->
+            <div class="col-lg-6">
+                <!--radio-->
+                <div class="form-group">
+                    <label id="seqTitle" style="display: none">Primary sequences</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inputType" id="typeIn" value="typeIn" checked="true" onclick=hideObj("uploadSeq");showObj("typeInSeq");showObj("typeBtnDiv");>Enter sequences
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inputType" id="upload" value="upload" onclick=hideObj("typeInSeq");showObj("uploadSeq");hideObj("typeBtnDiv");>Upload sequence file
+                    </label>
+                </div>
+                <!--input box-->
+                <textarea id="typeInSeq" name="typeInSeq" class="inputbox medium" style="width:545px;height:180px;padding-left:0px;display: block;" placeholder="Please enter the sequences in which you want to find motifs in fasta format …" ></textarea>
+                <br/>
+
+                <div id="typeBtnDiv">
+                    {#                    button for clean all the input#}
+                    <button type="button" class="btn btn-default" style="top: 10px" onclick=clearInput("typeInSeq");>Clear Input</button>
+                    {#                    button for giving a example#}
+                    <button type="button" class="btn btn-default" onclick=inputExample();>See Example</button>
+                </div>
+
+                <input id="uploadSeq" name="uploadSeq" type="file" style="display: none; ">
+            </div>
+
+            <!--right part: negative sequences-->
+            <div class="col-lg-6" id="negInput" style="display: none">
+                <!--radio-->
+                <div class="form-group">
+                    <label>Control sequences</label>
+                    <br/>
+                    <label class="radio-inline">
+                        <input type="radio" name="inputTypeNeg" id="typeInNeg" value="typeIn" checked="" onclick=hideObj("uploadSeqNeg");showObj("typeInSeqNeg");showObj("cleanBtnNeg")>Enter sequences
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inputTypeNeg" id="uploadNeg" value="upload" onclick=hideObj("typeInSeqNeg");showObj("uploadSeqNeg");hideObj("cleanBtnNeg")>Upload sequence file
+                    </label>
+                </div>
+                <!--input box-->
+                <textarea id="typeInSeqNeg" name="typeInSeqNeg" class="inputbox medium" style="width:545px;height:180px;padding-left:0px;display: block;" placeholder="Please enter the sequences that do NOT include motifs identified in the primary sequences…" ></textarea>
+                <br/>
+                <button id="cleanBtnNeg" type="button" class="btn btn-default" onclick=clearInput("typeInSeqNeg");>Clear Input</button>
+                <input id="uploadSeqNeg" name="uploadSeqNeg" type="file" style="display: none; ">                </div>
+        </div>
+        <br/>
+
+        <!--setting-->
+        <legend>Setting</legend>
+        <div class="container">
+
+{#            checkbox for setting#}
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="negSeqCheck" onclick="clickNegSeq('negInput');clickNegSeq('seqTitle')">(Optional) Enter negative control sequences<br>
+                        <input type="checkbox" name="BGmiRCheck">(Optional) Use miRNA as additional background<br>
+                        <input type="checkbox" name="covThres" onclick="clickNegSeq('covThres')">(Optional) Use customized minimum coverage percentage threshold for k-mers(default: 0.1)
+                        <input id="covThres" name="covThres" class="form-control" style="display: none;" value="0.1">
+                    </label>
+                </div>
+            </div>
+
+
+        </div>
+
+        <br/>
+
+        <!--input email-->
+        <legend>Others</legend>
+        <div class="container">
+            <div class="form-group">
+                <label>(Optional) Enter your email address:</label>
+                <input id="userEmail" name="userEmail" class="form-control" placeholder="An email will be sent as soon as the job is done." onblur=checkEmail(this)>
+            </div>
+        </div>
+
+        <!--buttons-->
+        <div align="center">
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+
+
+<!--load common footer-->
+<div class="container"><script language="JavaScript" >footer();</script></div>
+
+</body>
+
+</html>
